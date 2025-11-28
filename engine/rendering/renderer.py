@@ -53,24 +53,21 @@ class DeferredRenderer:
         self.position_texture = self.ctx.texture(
             (width, height), 
             components=3, 
-            dtype='f4',
-            name='g_position'
+            dtype='f4'
         )
         self.position_texture.filter = (moderngl.LINEAR, moderngl.LINEAR)
         
         self.normal_texture = self.ctx.texture(
             (width, height), 
             components=3, 
-            dtype='f4',
-            name='g_normal'
+            dtype='f4'
         )
         self.normal_texture.filter = (moderngl.LINEAR, moderngl.LINEAR)
         
         self.albedo_texture = self.ctx.texture(
             (width, height), 
             components=4, 
-            dtype='f4',
-            name='g_albedo'
+            dtype='f4'
         )
         self.albedo_texture.filter = (moderngl.LINEAR, moderngl.LINEAR)
         
