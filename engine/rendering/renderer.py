@@ -49,25 +49,28 @@ class DeferredRenderer:
         # Get viewport dimensions
         width, height = self.ctx.fbo.size
         
-        # Create textures for G-buffer
+        # Create textures for G-buffer with formats compatible with multiple render targets
         self.position_texture = self.ctx.texture(
             (width, height), 
-            components=3, 
-            dtype='f4'
+            components=4,  # Use 4 components to ensure compatibility
+            dtype='f4',
+            internal_format=moderngl.RGBA32F  # Explicitly specify format for MRT compatibility
         )
         self.position_texture.filter = (moderngl.LINEAR, moderngl.LINEAR)
         
         self.normal_texture = self.ctx.texture(
             (width, height), 
-            components=3, 
-            dtype='f4'
+            components=4,  # Use 4 components to ensure compatibility
+            dtype='f4',
+            internal_format=moderngl.RGBA32F  # Explicitly specify format for MRT compatibility
         )
         self.normal_texture.filter = (moderngl.LINEAR, moderngl.LINEAR)
         
         self.albedo_texture = self.ctx.texture(
             (width, height), 
             components=4, 
-            dtype='f4'
+            dtype='f4',
+            internal_format=moderngl.RGBA32F  # Explicitly specify format for MRT compatibility
         )
         self.albedo_texture.filter = (moderngl.LINEAR, moderngl.LINEAR)
         
@@ -116,13 +119,13 @@ class DeferredRenderer:
                 in vec3 frag_normal;
                 in vec3 frag_color;
                 
-                out vec3 out_position;
-                out vec3 out_normal;
+                out vec4 out_position;
+                out vec4 out_normal;
                 out vec4 out_albedo;
                 
                 void main() {
-                    out_position = frag_position;
-                    out_normal = normalize(frag_normal);
+                    out_position = vec4(frag_position, 1.0);
+                    out_normal = vec4(normalize(frag_normal), 1.0);
                     out_albedo = vec4(frag_color, 1.0);
                 }
             '''
@@ -153,8 +156,8 @@ class DeferredRenderer:
                 uniform vec3 camera_pos;
                 
                 void main() {
-                    vec3 frag_pos = texture(g_position, texcoord).rgb;
-                    vec3 normal = texture(g_normal, texcoord).rgb;
+                    vec3 frag_pos = texture(g_position, texcoord).rgb;  // Extract RGB only
+                    vec3 normal = texture(g_normal, texcoord).rgb;      // Extract RGB only
                     vec4 albedo_spec = texture(g_albedo, texcoord);
                     vec3 albedo = albedo_spec.rgb;
                     
